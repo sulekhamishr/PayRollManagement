@@ -4,165 +4,113 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Employee and Leave Info</title>
-</head>
-<body>
- <!-- Adding Blue and White Theme CSS -->
+    <title>Pending Leave Applications</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f8fc; /* Light blue background */
-            color: #333; /* Dark text for readability */
+            background-color: #f4f8fc;
+            color: #333;
             margin: 0;
             padding: 0;
         }
-        
-        h1 {
+        h2 {
             text-align: center;
-            color: #1e3a8a; /* Deep blue */
-            margin-top: 20px;
+            color: #1e3a8a;
+            margin: 20px 0;
         }
-
         table {
             width: 90%;
             margin: 20px auto;
             border-collapse: collapse;
-            border: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-
         th, td {
             padding: 12px;
-            text-align: center;
             border: 1px solid #ddd;
+            text-align: center;
         }
-
         th {
-            background-color: #1e3a8a; /* Deep blue for header */
-            color: white; /* White text for header */
+            background-color: #1e3a8a;
+            color: white;
         }
-
         tr:nth-child(even) {
-            background-color: #e0f2fe; /* Lighter blue for even rows */
+            background-color: #e0f2fe;
         }
-
         tr:hover {
-            background-color: #cce4ff; /* Hover effect on rows */
+            background-color: #cce4ff;
         }
-
-        a {
-            text-decoration: none;
-            color: #1e3a8a; /* Deep blue color for links */
-            font-weight: bold;
+        .highlight-row {
+            background-color: #a5d8ff !important;
         }
-
-        a:hover {
-            color: #2563eb; /* Lighter blue on hover */
+        .action-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .action-button:disabled {
+            background-color: #9aaedb;
+            cursor: not-allowed;
+        }
+        .note {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
         }
     </style>
+    <script>
+        function enableButton(row) {
+            let rows = document.querySelectorAll("table tr");
+            rows.forEach(r => r.classList.remove("highlight-row"));
+            row.classList.add("highlight-row");
+            document.getElementById("approveBtn").disabled = false;
+        }
+    </script>
 </head>
 <body>
 
+<h2>My Reporting Employees' Pending Leave Applications Section</h2>
 
-    <jsp:useBean id="employDao" class="com.java.lms.dao.EmployDaoImpl" />
-    <jsp:useBean id="leaveDao" class="com.java.lms.dao.LeaveDaoImpl" />
-
-    <c:set var="empId" value="${param.empId}" />
-    <c:set var="mgrId" value="${param.mgrId}" />
-    <c:set var="myInfo" value="${employDao.searchEmployDao(empId)}" />
-    <c:set var="myManagerInfo" value="${employDao.searchEmployDao(mgrId)}" />
-    <c:set var="leaveInfo" value="${leaveDao.showLeaveHistory(empId)}" />
-    <c:set var="leavePending" value="${leaveDao.pendingLeaveList(empId)}"/> 
-    
-
-    <h2 align="center">Employee Information</h2>
-    <a href="ApplyLeave.jsp?empId=${param.empId }">Apply Leave</a>
-    <table border="3" align="center">
-        <tr>
-            <td>
-                <p>Employee Id: <b>${myInfo.empId}</b></p>
-                <p>Name: <b>${myInfo.empName}</b></p>
-                <p>Email: <b>${myInfo.empMail}</b></p>
-                <p>Mobile No: <b>${myInfo.empMobno}</b></p>
-                <p>Department: <b>${myInfo.empDept}</b></p>
-                <p>Date Of Join: <b>${myInfo.empJoinDate}</b></p>
-                <p>Manager Id: <b>${myInfo.empMgrId}</b></p>
-                <p>Leave Balance: <b>${myInfo.empLeaveBal}</b></p>
-            </td>
-            <td>
-                <p>Manager Id: <b>${myManagerInfo.empId}</b></p>
-                <p>Name: <b>${myManagerInfo.empName}</b></p>
-                <p>Email: <b>${myManagerInfo.empMail}</b></p>
-                <p>Mobile No: <b>${myManagerInfo.empMobno}</b></p>
-                <p>Department: <b>${myManagerInfo.empDept}</b></p>
-                <p>Date Of Join: <b>${myManagerInfo.empJoinDate}</b></p>
-                <p>Manager’s Manager Id: <b>${myManagerInfo.empMgrId}</b></p>
-                <p>Leave Balance: <b>${myManagerInfo.empLeaveBal}</b></p>
-            </td>
-        </tr>
-    </table>
-
-    <h2 align="center">Leave History</h2>
-    <table border="3" align="center">
-        <tr>
-            <th>Leave ID</th>
-            <th>No. of Days</th>
-            <th>Manager Comments</th>
-            <th>Emp ID</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Reason</th>
-        </tr>
-        <c:forEach var="leave" items="${leaveInfo}">
-            <tr>
-                <td>${leave.leaveId}</td>
-                <td>${leave.noOfDays}</td>
-                <td>${leave.leaveMgrCmts}</td>
-                <td>${leave.empId}</td>
-                <td>${leave.leaveStDt}</td>
-                <td>${leave.leaveEndDt}</td>
-                <td>${leave.leaveType}</td>
-                <td>${leave.leaveStatus}</td>
-                <td>${leave.leaveReason}</td>
-            </tr>
-        </c:forEach>
-    </table>
-    
-    <h2 align="center">View Leave History</h2>
-    <table border="3" align="center">
-    
-      <tr>
-            <th>Leave ID</th>
-            <th>No. of Days</th>
-            <th>Emp ID</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Reason</th>
-        </tr>
-        <c:forEach var="leavePending" items="${leavePending}">
-        <tr>
-                <td>${leavePending.leaveId}</td>
-                <td>${leavePending.noOfDays}</td>
-                <td>${leavePending.empId}</td>
-                <td>${leavePending.leaveStDt}</td>
-                <td>${leavePending.leaveEndDt}</td>
-                <td>${leavePending.leaveType}</td>
-                <td>${leavePending.leaveStatus}</td>
-                <td>${leavePending.leaveReason}</td>
-            </tr>
-        </c:forEach>
-    </table>
-    
-   
+<table>
+    <tr>
+        <th>Employee ID</th>
+        <th>Employee Name</th>
+        <th>Leave ID</th>
+        <th>Number of Days</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Leave Type</th>
+        <th>Status</th>
+        <th>Reason</th>
+        <th>Leave Balance</th>
     </tr>
+    <c:forEach var="leave" items="${leavePending}">
+        <tr onclick="enableButton(this)">
+            <td>${leave.empId}</td>
+            <td>${leave.empName}</td>
+            <td>${leave.leaveId}</td>
+            <td>${leave.noOfDays}</td>
+            <td>${leave.leaveStDt}</td>
+            <td>${leave.leaveEndDt}</td>
+            <td>${leave.leaveType}</td>
+            <td>${leave.leaveStatus}</td>
+            <td>${leave.leaveReason}</td>
+            <td>${leave.leaveBal}</td>
+        </tr>
+    </c:forEach>
+</table>
+
+<button id="approveBtn" class="action-button" disabled onclick="location.href='ApproveDeny.jsp'">Approve/Deny</button>
+
+<div class="note">
+    <p>Selecting a row highlights the leave row and enables the button. Clicking the button goes to the "Approve/Deny" screen.</p>
+    <p>Default sorted by employee ID ascending, and within an employee, by the start date descending.</p>
+</div>
+
 </body>
 </html>
